@@ -1,0 +1,48 @@
+let url = "http://localhost:3000/api/products"
+
+fetch (url)
+.then(data => {
+    return data.json()
+}).then(products =>{
+
+    let HTML = document.getElementById("items")
+
+    //let myHTML = ""
+    products.forEach(product => {
+
+      let card = document.createElement("a");
+      card.href = `./product.html?id=${product._id}`
+
+      let cardArticle = document.createElement("article");
+
+      let cardImg = document.createElement("img");
+      cardImg.src = product.imageUrl;
+      cardImg.alt = product.altTxt;
+      cardArticle.appendChild(cardImg)
+
+      let cardTitle = document.createElement("h3");
+      cardTitle.textContent = `${product.name}`
+
+      cardArticle.appendChild(cardTitle)
+
+      let cardPrice = document.createElement("p");
+      cardPrice.textContent = `${product.price} €`
+
+      cardArticle.appendChild(cardPrice)
+
+      card.appendChild(cardArticle)
+     
+      HTML.appendChild(card)
+
+
+        //  myHTML += `<a href="./product.html?id=${product._id}">
+        //   <article>
+        //     <img src="${product.imageUrl}" alt="${product.name}">
+        //     <h3 class="productName">${product.name}</h3>
+        //     <p class="productDescription">${product.price} €</p>
+        //   </article>
+        // </a>`
+    });
+
+    //HTML.innerHTML = myHTML
+})
