@@ -1,13 +1,15 @@
-let url = "http://localhost:3000/api/products"
+// recupération des produits par l'url
+fetch ("http://localhost:3000/api/products")
+    .then(data => {
+        return data.json()
+    }).then(products =>{
 
-fetch (url)
-.then(data => {
-    return data.json()
-}).then(products =>{
-
+    // variable pour recuperer le nom de la section en HTML
     let HTML = document.getElementById("items")
 
     //let myHTML = ""
+
+    // création de la card produit 
     products.forEach(product => {
 
       let card = document.createElement("a");
@@ -46,3 +48,4 @@ fetch (url)
 
     //HTML.innerHTML = myHTML
 })
+
