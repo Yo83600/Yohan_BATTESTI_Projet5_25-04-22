@@ -39,39 +39,72 @@ fetch (`http://localhost:3000/api/products/${id}`)
          <option> ${color} </option>
         `;
         });
-         
-        //console.log(item)
-       
+   
+            
     // au clic on ajoute dans le panier
 
-    let btnPanier = document.getElementById("addToCart")
+    let btnPanier = document.getElementById("addToCart");
+    let itemQuantity = document.getElementById("quantity");
+
     btnPanier.addEventListener("click" , ()=> {
-        console.log("ok")
-    },false);
+        if (itemQuantity.value > 0 && itemQuantity.value < 100) {
+            // ------ Création du produit qui sera ajouté au panier
+            let myProduit = {
+                id : item._id,
+                name : item.name,
+                img : item.imageUrl,
+                alt : item.altTxt,
+                color : itemColor.value,
+                quantity: parseFloat(document.getElementById("quantity").value),
+                price : item.price
+            };
 
-    // si j'ai un panier (localstorage) je récupere les info du panier pour ajouter des nouveaux produits
+            let arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
 
-    cardProduits = JSON.parse(localStorage.getItem('panier'));
+            if(localStorage.getItem("panier") !== null){
+                arrayProductsInCart.push(myProduit);
+                localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
 
-    // creation de tableau dans local storage
+                console.log(arrayProductsInCart)
+            }
 
-    // let myProduit = cardProduits;
-    myProduit = {
-        id : item._id,
-        name : item.name,
-        imageUrl : item.imageUrl,
-        description : item.description,
-        price : item.price
-    };
+            else {
+                arrayProductsInCart = [];
+                arrayProductsInCart.push(myProduit);
+                localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
 
-    // trnasformation du tableau en JSON
-    myProduit = JSON.stringify(myProduit);
+                console.log(arrayProductsInCart)
+            }
 
-    // mettre les information qu'on a besoin
-    localStorage.setItem('panier',myProduit)
+            // // ----------------- Gestion du localStorage
+            // let arrayProductsInCart = [];
+            
+            // // si j'ai un panier (localstorage) je récupere les info du panier pour ajouter des nouveaux produits
 
-    // fin du click
-    console.log(localStorage.getItem('panier'))
+            // if (localStorage.getItem("panier") !== null) {
+            // arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
+            // } 
 
+            // console.log(localStorage.getItem('panier'))
+
+            // // creation de tableau dans local storage
+
+            // // trnasformation du tableau en JSON
+            // myProduit = JSON.stringify(myProduit);
+
+            // // si vide , on créer avec le produit ajouté
+            // arrayProductsInCart.push(myProduit);
+
+            // // mettre les information qu'on a besoin
+            // localStorage.setItem("panier",JSON.stringify(arrayProductsInCart));
+
+            // // fin du click
+          
+            // console.log(localStorage.setItem('panier',arrayProductsInCart))
+            
+        }
+    });
  });
+
+
       
