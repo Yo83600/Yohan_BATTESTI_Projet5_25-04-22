@@ -47,7 +47,15 @@ fetch (`http://localhost:3000/api/products/${id}`)
     let itemQuantity = document.getElementById("quantity");
 
     btnPanier.addEventListener("click" , ()=> {
-        if (itemQuantity.value > 0 && itemQuantity.value < 100) {
+        if (itemQuantity.value <= 0 || 
+            itemQuantity.value > 100 || 
+            itemQuantity.value === undefined ||
+            itemColor.value === "" ||
+            itemColor.value === undefined )
+        {
+            alert("Pour valider le choix de cet article, veuillez renseigner une couleur, et/ou une quantité valide entre 1 et 100");
+        } 
+        else {
             // ------ Création du produit qui sera ajouté au panier
             let myProduit = {
                 id : item._id,
@@ -61,7 +69,10 @@ fetch (`http://localhost:3000/api/products/${id}`)
 
             let arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
 
-            if(localStorage.getItem("panier") !== null){
+            console.log(myProduit.id)
+
+            if(arrayProductsInCart){
+                console.log("salut")
                 arrayProductsInCart.push(myProduit);
                 localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
 
@@ -76,6 +87,7 @@ fetch (`http://localhost:3000/api/products/${id}`)
                 console.log(arrayProductsInCart)
             }
 
+            alert("L'article a été ajouté au panier")
             // // ----------------- Gestion du localStorage
             // let arrayProductsInCart = [];
             

@@ -27,10 +27,10 @@ fetch ("http://localhost:3000/api/products")
 
       cardArticle.appendChild(cardTitle)
 
-      let cardPrice = document.createElement("p");
-      cardPrice.textContent = `${product.price} €`
+      let cardDescription = document.createElement("p");
+      cardDescription.textContent = `${product.description} €`
 
-      cardArticle.appendChild(cardPrice)
+      cardArticle.appendChild(cardDescription)
 
       card.appendChild(cardArticle)
      
