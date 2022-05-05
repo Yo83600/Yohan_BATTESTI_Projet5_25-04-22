@@ -5,14 +5,14 @@ const id = urlParams.get("id");
 console.log(id)
 
 // recuperation des articles par l'api
-fetch (`http://localhost:3000/api/products/${id}`)
+fetch(`http://localhost:3000/api/products/${id}`)
     .then(data => {
         return data.json()
     })
 
     // récuperation des information des articles
-    .then(item =>{
-   
+    .then(item => {
+
         let itemImg = document.querySelector(".item__img");
         itemImg.innerHTML += `
         <img src="${item.imageUrl}" alt="${item.altTxt}">
@@ -24,99 +24,78 @@ fetch (`http://localhost:3000/api/products/${id}`)
         `;
 
         let itemPrice = document.getElementById("price");
-            itemPrice.innerHTML += `
+        itemPrice.innerHTML += `
          ${item.price} 
         `;
 
         let itemDescription = document.getElementById("description");
-            itemDescription.innerHTML += `
+        itemDescription.innerHTML += `
         ${item.description}
         `;
 
         let itemColor = document.getElementById("colors");
         item.colors.forEach((color) => {
-                 itemColor.innerHTML += `
+            itemColor.innerHTML += `
          <option> ${color} </option>
         `;
         });
-   
-            
-    // au clic on ajoute dans le panier
 
-    let btnPanier = document.getElementById("addToCart");
-    let itemQuantity = document.getElementById("quantity");
+        // au clic on ajoute dans le panier
 
-    btnPanier.addEventListener("click" , ()=> {
-        if (itemQuantity.value <= 0 || 
-            itemQuantity.value > 100 || 
-            itemQuantity.value === undefined ||
-            itemColor.value === "" ||
-            itemColor.value === undefined )
-        {
-            alert("Pour valider le choix de cet article, veuillez renseigner une couleur, et/ou une quantité valide entre 1 et 100");
-        } 
-        else {
-            // ------ Création du produit qui sera ajouté au panier
-            let myProduit = {
-                id : item._id,
-                name : item.name,
-                img : item.imageUrl,
-                alt : item.altTxt,
-                color : itemColor.value,
-                quantity: parseFloat(document.getElementById("quantity").value),
-                price : item.price
-            };
+        let btnPanier = document.getElementById("addToCart");
+        let itemQuantity = document.getElementById("quantity");
 
-            let arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
+        btnPanier.addEventListener("click", () => {
+            if (itemQuantity.value <= 0 ||
+                itemQuantity.value > 100 ||
+                itemQuantity.value === undefined ||
+                itemColor.value === "" ||
+                itemColor.value === undefined) {
+                alert("Pour valider le choix de cet article, veuillez renseigner une couleur et une quantité valide entre 1 et 100");
+            } 
+            else 
+            {
+                // ------ Création du produit qui sera ajouté au panier
+                let myProduit = {
+                    id: item._id,
+                    name: item.name,
+                    img: item.imageUrl,
+                    price : item.price,
+                    alt: item.altTxt,
+                    color: itemColor.value,
+                    quantity: parseFloat(document.getElementById("quantity").value),
+                };
 
-            console.log(myProduit.id)
+                let arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
 
-            if(arrayProductsInCart){
-                console.log("salut")
-                arrayProductsInCart.push(myProduit);
-                localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
+                if (arrayProductsInCart !== null){
 
-                console.log(arrayProductsInCart)
+                    let alreadyInCart = arrayProductsInCart.find((item => item.id === myProduit.id && item.color === myProduit.color))
+                    // console.log(alreadyInCart)
+                    if (alreadyInCart) {
+                        console.log("J'ai trouvé mon produit " + myProduit.id)
+                         // alreadyInCart.quantity = 15; Modifier la quantité avec la quantité nouvelle
+                        alreadyInCart.quantity += myProduit.quantity
+                        alert("L'article " + myProduit.name + " existe déja dans le panier , sa quantité a été modifié")
+                    }
+                    else{
+                        arrayProductsInCart.push(myProduit);
+                        alert("L'article a été ajouté au panier")
+                    }
+                    localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
+
+                    console.log(arrayProductsInCart)
+                } 
+                else {
+                    arrayProductsInCart = [];
+                    arrayProductsInCart.push(myProduit);
+                    localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
+                    alert("L'article a été ajouté au panier")
+
+                    console.log(arrayProductsInCart)
+                }
+                
             }
-
-            else {
-                arrayProductsInCart = [];
-                arrayProductsInCart.push(myProduit);
-                localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
-
-                console.log(arrayProductsInCart)
-            }
-
-            alert("L'article a été ajouté au panier")
-            // // ----------------- Gestion du localStorage
-            // let arrayProductsInCart = [];
-            
-            // // si j'ai un panier (localstorage) je récupere les info du panier pour ajouter des nouveaux produits
-
-            // if (localStorage.getItem("panier") !== null) {
-            // arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
-            // } 
-
-            // console.log(localStorage.getItem('panier'))
-
-            // // creation de tableau dans local storage
-
-            // // trnasformation du tableau en JSON
-            // myProduit = JSON.stringify(myProduit);
-
-            // // si vide , on créer avec le produit ajouté
-            // arrayProductsInCart.push(myProduit);
-
-            // // mettre les information qu'on a besoin
-            // localStorage.setItem("panier",JSON.stringify(arrayProductsInCart));
-
-            // // fin du click
-          
-            // console.log(localStorage.setItem('panier',arrayProductsInCart))
-            
-        }
+        });
     });
- });
-
-
-      
+    
