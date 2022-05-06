@@ -10,7 +10,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
         return data.json()
     })
 
-    // récuperation des information des articles
+    // récuperation des information des articles et on les ajoutes dans le code HTML
     .then(item => {
 
         let itemImg = document.querySelector(".item__img");
@@ -66,26 +66,31 @@ fetch(`http://localhost:3000/api/products/${id}`)
                     quantity: parseFloat(document.getElementById("quantity").value),
                 };
 
+                // récuperation du panier dans le localstorage
                 let arrayProductsInCart = JSON.parse(localStorage.getItem("panier"));
 
+                // si le panier n'est pas vide
                 if (arrayProductsInCart !== null){
 
+                    // variable qui permet de verifier si l'id et la couleur des articles sont les même 
                     let alreadyInCart = arrayProductsInCart.find((item => item.id === myProduit.id && item.color === myProduit.color))
-                    // console.log(alreadyInCart)
+
                     if (alreadyInCart) {
-                        console.log("J'ai trouvé mon produit " + myProduit.id)
-                         // alreadyInCart.quantity = 15; Modifier la quantité avec la quantité nouvelle
+                        // si la condition est remplie on additionne la quantité en +
                         alreadyInCart.quantity += myProduit.quantity
                         alert("L'article " + myProduit.name + " existe déja dans le panier , sa quantité a été modifié")
                     }
                     else{
+                        // sinon on push le nouveau article
                         arrayProductsInCart.push(myProduit);
                         alert("L'article a été ajouté au panier")
-                    }
-                    localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
+                    }   
 
-                    console.log(arrayProductsInCart)
+                    // on ajoute notre nouveau panier dans le local storage
+                    localStorage.setItem("panier", JSON.stringify(arrayProductsInCart))
                 } 
+
+                // si le panier est vide on créer un nouveau tableau ou l'on mettra nos articles dedans
                 else {
                     arrayProductsInCart = [];
                     arrayProductsInCart.push(myProduit);
@@ -94,7 +99,6 @@ fetch(`http://localhost:3000/api/products/${id}`)
 
                     console.log(arrayProductsInCart)
                 }
-                
             }
         });
     });
