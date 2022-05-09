@@ -7,7 +7,7 @@ console.log(basket);
 let cart = document.getElementById("cart__items");
 
 // si le panier est vide
-if (basket === null) {
+if (basket === null || basket && basket.length == 0) {
     let emptyBasket = document.createElement("h3");
     emptyBasket.style.textAlign = "center";
     emptyBasket.textContent = `votre panier est vide :(`
@@ -39,6 +39,8 @@ if (basket === null) {
     }
     modifQuantity();
     calculatorTotalPrice();
+    deleteItem();
+    checkForm(); 
 }
 
 
@@ -70,19 +72,21 @@ function modifQuantity () {
 //--------------------------------------------------------------
 // AU CLICK ON VIDE UN ARTICLE DU PANIER
 //--------------------------------------------------------------
-deleteSelection = Array.from(document.querySelectorAll('.deleteItem'));
+function deleteItem(){
+    deleteSelection = Array.from(document.querySelectorAll('.deleteItem'));
 
-// supprimer element
-for (let i = 0; i < deleteSelection.length; i++) {
+    // supprimer element
+    for (let i = 0; i < deleteSelection.length; i++) {
 
-    deleteSelection[i].parentElement.addEventListener('click', () => {
-            
-        basket.splice([i], 1);
-        location.reload();
-        alert("L'article a été supprimé")
-        basket = localStorage.setItem('panier', JSON.stringify(basket));
-    });
-};
+        deleteSelection[i].parentElement.addEventListener('click', () => {
+                
+            basket.splice([i], 1);
+            location.reload();
+            alert("L'article a été supprimé")
+            basket = localStorage.setItem('panier', JSON.stringify(basket));
+        });
+    };
+}
  
 //--------------------------------------------------------------
 // FONCTION POUR AFFICHER LE TOTAL DES QUANTITES ET DU PRIX TOTALS
@@ -105,6 +109,104 @@ function calculatorTotalPrice() {
     // je pointe l'endroit d'affichage du prix total
     document.getElementById("totalPrice").textContent = totalPrice;
 }
+
+//--------------------------------------------------------------
+// FONCTION POUR VALIDER LES DONNEES DU FORMULAIRE
+//--------------------------------------------------------------
+function checkForm() {
+
+  // récuperation de la balise HTML ou il y a le formulaire
+  let loginForm = document.querySelector(".cart__order__form");
+
+  let prenom = document.querySelector("#firstName");
+  prenom.classList.add("regexTxt");
+  let nom = document.querySelector("#lastName");
+  nom.classList.add("regexTxt");
+  let ville = document.querySelector("#city");
+  ville.classList.add("regexTxt");
+
+  let txtLetters = document.querySelectorAll(".regexTxt");
+
+  //---------------------------------------
+  // Regex pour les champs prénom,nom,ville
+  //---------------------------------------
+  let regexText = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
+
+  txtLetters.forEach((txtLetter) =>
+  txtLetter.addEventListener('change', () => {
+    if (firstName.value == ""){
+        document.getElementById("firstNameErrorMsg").textContent = "le champs prénom est requis";
+        document.getElementById("lastNameErrorMsg").textContent = "le champs nom est requis";
+        document.getElementById("cityErrorMsg").textContent = "le champs ville est requis";
+    }
+    else if (regexText.test(txtLetter.value) == false) {
+      document.getElementById("firstNameErrorMsg").textContent = "le champs prénom doit contenir un prénom valide";
+      document.getElementById("lastNameErrorMsg").textContent = "le champs nom doit contenir un nom valide";
+      document.getElementById("cityErrorMsg").textContent = "le champs ville doit contenir un ville valide";
+    }
+    else {
+      document.getElementById("firstNameErrorMsg").textContent = "le champs prénom est bon";
+      document.getElementById("lastNameErrorMsg").textContent = "le champs nom est bon";
+      document.getElementById("cityErrorMsg").textContent = "le champs ville est bon";
+    }
+  })
+  )
+
+  //---------------------------------------
+  // Regex pour le champs Adresse
+  //---------------------------------------
+  let addressRegex = /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
+
+  // ajout de l'evenement sur le input de l'email
+  loginForm.address.addEventListener('change', () => {
+
+    // si le champs email ne contient rien
+    if (loginForm.address.value == ""){
+      document.getElementById("addressErrorMsg").textContent = "le champs adresse est requis";
+      document.getElementById("address").style.backgroundColor = "red";
+      //e.preventDefault()
+    }
+    // si le le champs email n'est pas valide 
+    else if (addressRegex.test(loginForm.address.value) == false) {
+      document.getElementById("addressErrorMsg").textContent = "le champs adresse doit contenir une adresse valide";
+      document.getElementById("address").style.backgroundColor = "red";
+       //e.preventDefault()
+    }
+    // si le champs email est valide
+    else {
+      document.getElementById("addressErrorMsg").textContent = "le champs adresse est bon";
+      document.getElementById("address").style.backgroundColor = "green";
+    }
+  })
+
+  //---------------------------------------
+  // Regex pour le champs email
+  //---------------------------------------
+  let emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
+  // ajout de l'evenement sur le input de l'email
+  loginForm.email.addEventListener('change', () => {
+
+    // si le champs email ne contient rien
+    if (loginForm.email.value == ""){
+      document.getElementById("emailErrorMsg").textContent = "le champs email est requis";
+      document.getElementById("email").style.backgroundColor = "red";
+      //e.preventDefault()
+    }
+    // si le le champs email n'est pas valide 
+    else if (emailRegex.test(loginForm.email.value) == false) {
+      document.getElementById("emailErrorMsg").textContent = "le champs email doit contenir une adresse email valide";
+      document.getElementById("email").style.backgroundColor = "red";
+       //e.preventDefault()
+    }
+    // si le champs email est valide
+    else {
+      document.getElementById("emailErrorMsg").textContent = "le champs email est bon";
+       document.getElementById("email").style.backgroundColor = "green";
+    }
+  })
+}
+
 
 
 
