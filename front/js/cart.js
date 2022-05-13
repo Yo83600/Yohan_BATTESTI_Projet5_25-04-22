@@ -6,17 +6,16 @@ console.log(basket);
 // récupération de la section ou je vais injecter le code HTML
 let cart = document.getElementById("cart__items");
 
-
-    // si le panier est vide
-    if (basket === null || basket && basket.length == 0) {
-        let emptyBasket = document.createElement("h3");
-        emptyBasket.style.textAlign = "center";
-        emptyBasket.textContent = `votre panier est vide :(`
-        cart.appendChild(emptyBasket)
-    } else {
-        // boucle pour pouvoir afficher les produits ainsi que leurs description
-        for (let product in basket) {
-            cart.innerHTML += `<article class="cart__item" data-id="${basket[product].id}" data-color="${basket[product].color}" data-quantity="${basket[product].quantity}">
+// si le panier est vide
+if (basket === null || basket && basket.length == 0) {
+    let emptyBasket = document.createElement("h3");
+    emptyBasket.style.textAlign = "center";
+    emptyBasket.textContent = `votre panier est vide :(`
+    cart.appendChild(emptyBasket)
+} else {
+    // boucle pour pouvoir afficher les produits ainsi que leurs description
+    for (let product in basket) {
+        cart.innerHTML += `<article class="cart__item" data-id="${basket[product].id}" data-color="${basket[product].color}" data-quantity="${basket[product].quantity}">
              <div class="cart__item__img">
               <img src="${basket[product].img}" alt=${basket[product].alt}> 
                </div>
@@ -37,11 +36,11 @@ let cart = document.getElementById("cart__items");
                </div>
              </div>
          </article>`
-        }
-        modifQuantity();
-        calculatorTotalPrice();
-        deleteItem();
     }
+    modifQuantity();
+    calculatorTotalPrice();
+    deleteItem();
+}
 
 
 //--------------------------------------------------------------
@@ -68,21 +67,6 @@ function modifQuantity() {
         });
     });
 }
-
-// function callBack(nom){
-//         console.log(nom + "Je suis le callback")
-//     }
-
-// function testCallBack(nom , callBack){
-//     console.log(nom)
-//     function callBack(nom){
-//        return nom;
-//     }
-// }
-
-// testCallBack("Thomas", () => {
-//     console.log("Je suis le callBak Exterieur")
-// })
 
 //--------------------------------------------------------------
 // AU CLICK ON VIDE UN ARTICLE DU PANIER
@@ -128,155 +112,90 @@ function calculatorTotalPrice() {
 //--------------------------------------------------------------
 // FONCTION POUR VALIDER LES DONNEES DU FORMULAIRE
 //--------------------------------------------------------------
-    // récuperation de la balise HTML ou il y a le formulaire
-    let loginForm = document.querySelector(".cart__order__form");
+// récuperation de la balise HTML ou il y a le formulaire
+let loginForm = document.querySelector(".cart__order__form");
 
-    let prenom = document.querySelector("#firstName");
-    prenom.classList.add("regexTxt");
-    let nom = document.querySelector("#lastName");
-    nom.classList.add("regexTxt");
-    let ville = document.querySelector("#city");
-    ville.classList.add("regexTxt");
+//---------------------------------------
+// Regex pour les champs prénom,nom,ville
+//---------------------------------------
+let regexText = new RegExp("^[a-zA-Z ,.'-]+$");
 
-    let txtLetters = document.querySelectorAll(".regexTxt");
+//---------------------------------------
+// Regex pour le champs Adresse
+//---------------------------------------
+let addressRegex = new RegExp(/^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i);
 
-    //---------------------------------------
-    // Regex pour les champs prénom,nom,ville
-    //---------------------------------------
-    let regexText = /^[a-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i;
+//---------------------------------------
+// Regex pour le champs email
+//---------------------------------------
+let emailRegex = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
 
-    txtLetters.forEach((txtLetter) =>
-        txtLetter.addEventListener('input', () => {
-            if (firstName.value == "") {
-                document.getElementById("firstNameErrorMsg").textContent = "le champs prénom est requis";
-                document.getElementById("lastNameErrorMsg").textContent = "le champs nom est requis";
-                document.getElementById("cityErrorMsg").textContent = "le champs ville est requis";
-            } else if (regexText.test(txtLetter.value) == false) {
-                document.getElementById("firstNameErrorMsg").textContent = "le champs prénom doit contenir un prénom valide";
-                document.getElementById("lastNameErrorMsg").textContent = "le champs nom doit contenir un nom valide";
-                document.getElementById("cityErrorMsg").textContent = "le champs ville doit contenir un ville valide";
-            } else {
-                document.getElementById("firstNameErrorMsg").textContent = "le champs prénom est bon";
-                document.getElementById("lastNameErrorMsg").textContent = "le champs nom est bon";
-                document.getElementById("cityErrorMsg").textContent = "le champs ville est bon";
-            }
-        })
-    )
+function testInput(formInput, errorId, inputId, regex) {
+    if (formInput.value == "") {
+        document.getElementById(errorId).textContent = "le champs est requis";
+        document.getElementById(inputId).style.backgroundColor = "red";
+        return false;
+    }
+    else if (regex.test(formInput.value)) {
+        document.getElementById(errorId).textContent = "le champs est valide";
+        document.getElementById(inputId).style.backgroundColor = "green";
+        return true;
+    }
+    else {
+        document.getElementById(errorId).textContent = "le champs contient des caractères incorect ou n'est pas conforme";
+        document.getElementById(inputId).style.backgroundColor = "red";
+        return false;
+    }
+}
 
-    //---------------------------------------
-    // Regex pour le champs Adresse
-    //---------------------------------------
-    let addressRegex = /^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i;
+// testInput email
+loginForm.firstName.addEventListener('input', () => {
+        testInput(loginForm.firstName, "firstNameErrorMsg", "firstName", regexText)
+    });
 
-    testInput(loginForm.address, "addressErrorMsg", "address" , addressRegex )
-    // ajout de l'evenement sur le input de l'email
-    loginForm.address.addEventListener('input', () => {
+// testInput lastName
+loginForm.lastName.addEventListener('input', () => {
+        testInput(loginForm.lastName, "lastNameErrorMsg", "lastName", regexText)
+    });
 
-        // si le champs email ne contient rien
-        if (loginForm.address.value == "") {
-            document.getElementById("addressErrorMsg").textContent = "le champs adresse est requis";
-            document.getElementById("address").style.backgroundColor = "red";
-            //e.preventDefault()
-        }
-        // si le le champs email n'est pas valide 
-        else if (addressRegex.test(loginForm.address.value) == false) {
-            document.getElementById("addressErrorMsg").textContent = "le champs adresse doit contenir une adresse valide";
-            document.getElementById("address").style.backgroundColor = "red";
-            //e.preventDefault()
-        }
-        // si le champs email est valide
-        else {
-            document.getElementById("addressErrorMsg").textContent = "le champs adresse est bon";
-            document.getElementById("address").style.backgroundColor = "green";
-        }
+// testInput address
+loginForm.address.addEventListener('input', () => {
+        testInput(loginForm.address, "addressErrorMsg", "address", addressRegex)
+    });
+
+// testInput city
+loginForm.city.addEventListener('input', () => {
+        testInput(loginForm.city, "cityErrorMsg", "city", regexText)
+    });
+
+// testInput email
+loginForm.email.addEventListener('input', () => {
+        testInput(loginForm.email, "emailErrorMsg", "email", emailRegex)
+    });
+
+//---------------------------------------
+// Envoi des données avec la methode POST
+//---------------------------------------
+
+let submitOrder = document.getElementById("order")
+
+submitOrder.addEventListener("click", () => {
+
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault()
     })
 
-    //---------------------------------------
-    // Regex pour le champs email
-    //---------------------------------------
-    let emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-
-    // ajout de l'evenement sur le input de l'email
-    loginForm.email.addEventListener('input', () => {
-
-        // si le champs email ne contient rien
-        if (loginForm.email.value == "") {
-            document.getElementById("emailErrorMsg").textContent = "le champs email est requis";
-            document.getElementById("email").style.backgroundColor = "red";
-            //e.preventDefault()
-        }
-        // si le le champs email n'est pas valide 
-        else if (emailRegex.test(loginForm.email.value) == false) {
-            document.getElementById("emailErrorMsg").textContent = "le champs email doit contenir une adresse email valide";
-            document.getElementById("email").style.backgroundColor = "red";
-            //e.preventDefault()
-        }
-        // si le champs email est valide
-        else {
-            document.getElementById("emailErrorMsg").textContent = "le champs email est bon";
-            document.getElementById("email").style.backgroundColor = "green";
-        }
+    //Construction d'un array d'id depuis le local storage
+    let products = [];
+    basket.forEach(item => {
+        products.push(item.id)
     })
+    console.log(products)
 
-    function testInput(formInput , errorId, inputId, regex , message = `le champs est requis`){
-        if (formInput.value == "") {
-            document.getElementById(errorId).textContent = message;
-            document.getElementById(inputId).style.backgroundColor = "red";
-            //e.preventDefault()
-            console.log('ok test')
-        }
-    }
-
-    testInput(loginForm.email, "emailErrorMsg", "email" , emailRegex , "Je t'aime pas ahaha" )
-    // testInput(loginForm.email, emailRegex)
-
-    function testEmail(){
-        // si le champs email ne contient rien
-        if (loginForm.email.value == "") {
-        //     document.getElementById("emailErrorMsg").textContent = "le champs email est requis";
-        //     document.getElementById("email").style.backgroundColor = "red";
-        //     //e.preventDefault()
-            return false;
-        }
-        // si le le champs email n'est pas valide 
-        else if (emailRegex.test(loginForm.email.value) == false) {
-            document.getElementById("emailErrorMsg").textContent = "le champs email doit contenir une adresse email valide";
-            document.getElementById("email").style.backgroundColor = "red";
-            //e.preventDefault()
-            return false;
-        }
-        // si le champs email est valide
-        else {
-            document.getElementById("emailErrorMsg").textContent = "le champs email est bon";
-            document.getElementById("email").style.backgroundColor = "green";
-            return true;
-        }
-    }
-
-    //---------------------------------------
-    // Envoi des données avec la methode POST
-    //---------------------------------------
-
-    let submitOrder = document.getElementById("order")
-    submitOrder.addEventListener("click", () => {
-
-        loginForm.addEventListener("submit", (e) => {e.preventDefault()})
-
-        if(testEmail()){
-            console.log('Email vérifie')
-        }
-        
-        //Construction d'un array d'id depuis le local storage
-        let products = [];
-        basket.forEach(item => {
-            products.push(item.id)
-        })
-        console.log(products)
-
-        fetch("http://localhost:3000/api/products/order", {
-                method: "POST",
-                body: JSON.stringify({
-                contact : {
+    fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            body: JSON.stringify({
+                contact: {
                     firstName: document.querySelector("#firstName").value,
                     lastName: document.querySelector("#lastName").value,
                     address: document.querySelector("#address").value,
@@ -284,16 +203,14 @@ function calculatorTotalPrice() {
                     email: document.querySelector("#email").value
                 },
                 products
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                },
-            }).then((res) => res.json())
-            .then(data => {
-                // envoyé à la page confirmation, autre écriture de la valeur "./confirmation.html?commande=${data.orderId}"
-                document.location.href = `/front/html/confirmation.html?commande=${data.orderId}`;
-            })
-    })
-
-
+            }),
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+        }).then((res) => res.json())
+        .then(data => {
+            // envoyé à la page confirmation, autre écriture de la valeur "./confirmation.html?commande=${data.orderId}"
+            document.location.href = `/front/html/confirmation.html?commande=${data.orderId}`;
+        })
+})
