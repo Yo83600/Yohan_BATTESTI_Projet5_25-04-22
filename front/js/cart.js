@@ -118,99 +118,113 @@ let loginForm = document.querySelector(".cart__order__form");
 //---------------------------------------
 // Regex pour les champs prénom,nom,ville
 //---------------------------------------
-let regexText = new RegExp("^[a-zA-Z ,.'-]+$");
+let regexText = new RegExp("^[a-zA-Z ,.'-áàâäãåçéèêëíìîïñóòôöõúùûüýÿ]+$");
 
 //---------------------------------------
 // Regex pour le champs Adresse
 //---------------------------------------
-let addressRegex = new RegExp(/^[a-z0-9áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i);
+let addressRegex = new RegExp(/^[a-z0-9'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i);
 
 //---------------------------------------
 // Regex pour le champs email
 //---------------------------------------
 let emailRegex = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
 
+//---------------------------------------
+// Fonction pour tester les champs input grâce au regex definis
+//---------------------------------------
 function testInput(formInput, errorId, inputId, regex) {
     if (formInput.value == "") {
         document.getElementById(errorId).textContent = "le champs est requis";
         document.getElementById(inputId).style.backgroundColor = "red";
         return false;
-    }
-    else if (regex.test(formInput.value)) {
+    } else if (regex.test(formInput.value)) {
         document.getElementById(errorId).textContent = "le champs est valide";
         document.getElementById(inputId).style.backgroundColor = "green";
         return true;
-    }
-    else {
+    } else {
         document.getElementById(errorId).textContent = "le champs contient des caractères incorect ou n'est pas conforme";
         document.getElementById(inputId).style.backgroundColor = "red";
         return false;
     }
 }
 
-// testInput email
+// testInput firstName
 loginForm.firstName.addEventListener('input', () => {
-        testInput(loginForm.firstName, "firstNameErrorMsg", "firstName", regexText)
-    });
+    testInput(loginForm.firstName, "firstNameErrorMsg", "firstName", regexText)
+});
 
 // testInput lastName
 loginForm.lastName.addEventListener('input', () => {
-        testInput(loginForm.lastName, "lastNameErrorMsg", "lastName", regexText)
-    });
+    testInput(loginForm.lastName, "lastNameErrorMsg", "lastName", regexText)
+});
 
 // testInput address
 loginForm.address.addEventListener('input', () => {
-        testInput(loginForm.address, "addressErrorMsg", "address", addressRegex)
-    });
+    testInput(loginForm.address, "addressErrorMsg", "address", addressRegex)
+});
 
 // testInput city
 loginForm.city.addEventListener('input', () => {
-        testInput(loginForm.city, "cityErrorMsg", "city", regexText)
-    });
+    testInput(loginForm.city, "cityErrorMsg", "city", regexText)
+});
 
 // testInput email
 loginForm.email.addEventListener('input', () => {
-        testInput(loginForm.email, "emailErrorMsg", "email", emailRegex)
-    });
+    testInput(loginForm.email, "emailErrorMsg", "email", emailRegex)
+});
 
 //---------------------------------------
 // Envoi des données avec la methode POST
 //---------------------------------------
-
+//let testCity = regexText.test(loginForm.city.value)
 let submitOrder = document.getElementById("order")
 
-submitOrder.addEventListener("click", () => {
+submitOrder.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (basket === null || basket && basket.length == 0) {
+        alert("Votre panier est vide")
+    } else {
+        if (testInput(loginForm.firstName, "firstNameErrorMsg", "firstName", regexText) &&
+            testInput(loginForm.lastName, "lastNameErrorMsg", "lastName", regexText) &&
+            testInput(loginForm.address, "addressErrorMsg", "address", addressRegex) &&
+            testInput(loginForm.city, "cityErrorMsg", "city", regexText) &&
+            testInput(loginForm.email, "emailErrorMsg", "email", emailRegex)) {
 
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault()
-    })
+            // loginForm.addEventListener("submit", (e) => {
+            //     e.preventDefault()
+            // })
 
-    //Construction d'un array d'id depuis le local storage
-    let products = [];
-    basket.forEach(item => {
-        products.push(item.id)
-    })
-    console.log(products)
+            //Construction d'un array d'id depuis le local storage
+            let products = [];
+            basket.forEach(item => {
+                products.push(item.id)
+            })
+            console.log(products)
 
-    fetch("http://localhost:3000/api/products/order", {
-            method: "POST",
-            body: JSON.stringify({
-                contact: {
-                    firstName: document.querySelector("#firstName").value,
-                    lastName: document.querySelector("#lastName").value,
-                    address: document.querySelector("#address").value,
-                    city: document.querySelector("#city").value,
-                    email: document.querySelector("#email").value
-                },
-                products
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-        }).then((res) => res.json())
-        .then(data => {
-            // envoyé à la page confirmation, autre écriture de la valeur "./confirmation.html?commande=${data.orderId}"
-            document.location.href = `/front/html/confirmation.html?commande=${data.orderId}`;
-        })
+            fetch("http://localhost:3000/api/products/order", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        contact: {
+                            firstName: document.querySelector("#firstName").value,
+                            lastName: document.querySelector("#lastName").value,
+                            address: document.querySelector("#address").value,
+                            city: document.querySelector("#city").value,
+                            email: document.querySelector("#email").value
+                        },
+                        products
+                    }),
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                }).then((res) => res.json())
+                .then(data => {
+                    // envoyé à la page confirmation, autre écriture de la valeur "./confirmation.html?commande=${data.orderId}"
+                    document.location.href = `/front/html/confirmation.html?commande=${data.orderId}`;
+                })
+        } else {
+            alert("Un champs est incorrect reformulez le")
+        }
+    }
 })
