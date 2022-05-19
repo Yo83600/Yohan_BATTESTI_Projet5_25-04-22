@@ -7,8 +7,6 @@ fetch("http://localhost:3000/api/products")
         // variable pour recuperer le nom de la section en HTML
         let HTML = document.getElementById("items")
 
-        //let myHTML = ""
-
         // création de la card produit 
         products.forEach(product => {
 
@@ -35,16 +33,5 @@ fetch("http://localhost:3000/api/products")
             card.appendChild(cardArticle)
 
             HTML.appendChild(card)
-
-
-            //  myHTML += `<a href="./product.html?id=${product._id}">
-            //   <article>
-            //     <img src="${product.imageUrl}" alt="${product.name}">
-            //     <h3 class="productName">${product.name}</h3>
-            //     <p class="productDescription">${product.price} €</p>
-            //   </article>
-            // </a>`
         });
-
-        //HTML.innerHTML = myHTML
     })
