@@ -112,24 +112,21 @@ function calculatorTotalPrice() {
 //--------------------------------------------------------------
 // FONCTION POUR VALIDER LES DONNEES DU FORMULAIRE
 //--------------------------------------------------------------
+
 // récuperation de la balise HTML ou il y a le formulaire
 let loginForm = document.querySelector(".cart__order__form");
-
 //---------------------------------------
 // Regex pour les champs prénom,nom,ville
 //---------------------------------------
-let regexText = new RegExp("^[a-zA-Z ,.'-áàâäãåçéèêëíìîïñóòôöõúùûüýÿ]+$");
-
+let regexText = new RegExp("^[a-zA-Z,.'-áàâäãåçéèêëíìîïñóòôöõúùûüýÿ]+$");
 //---------------------------------------
 // Regex pour le champs Adresse
 //---------------------------------------
 let addressRegex = new RegExp(/^[a-z0-9'áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,60}$/i);
-
 //---------------------------------------
 // Regex pour le champs email
 //---------------------------------------
 let emailRegex = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
-
 //---------------------------------------
 // Fonction pour tester les champs input grâce au regex definis
 //---------------------------------------
@@ -182,18 +179,16 @@ let submitOrder = document.getElementById("order")
 
 submitOrder.addEventListener("click", (e) => {
     e.preventDefault();
+    // si le panier est vide
     if (basket === null || basket && basket.length == 0) {
         alert("Votre panier est vide")
     } else {
+        // sinon condition pour verifier si les champs sont correctement respectés
         if (testInput(loginForm.firstName, "firstNameErrorMsg", "firstName", regexText) &&
             testInput(loginForm.lastName, "lastNameErrorMsg", "lastName", regexText) &&
             testInput(loginForm.address, "addressErrorMsg", "address", addressRegex) &&
             testInput(loginForm.city, "cityErrorMsg", "city", regexText) &&
             testInput(loginForm.email, "emailErrorMsg", "email", emailRegex)) {
-
-            // loginForm.addEventListener("submit", (e) => {
-            //     e.preventDefault()
-            // })
 
             //Construction d'un array d'id depuis le local storage
             let products = [];
@@ -202,6 +197,7 @@ submitOrder.addEventListener("click", (e) => {
             })
             console.log(products)
 
+            // methode fetch (post) pour l'envoie des données à poster
             fetch("http://localhost:3000/api/products/order", {
                     method: "POST",
                     body: JSON.stringify({
@@ -224,7 +220,7 @@ submitOrder.addEventListener("click", (e) => {
                     document.location.href = `/front/html/confirmation.html?commande=${data.orderId}`;
                 })
         } else {
-            alert("Un champs est incorrect reformulez le")
+            alert("Un champs est incorrect ou n'est pas rempli reformulez le")
         }
     }
 })

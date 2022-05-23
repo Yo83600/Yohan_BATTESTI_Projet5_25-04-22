@@ -40,12 +40,14 @@ fetch(`http://localhost:3000/api/products/${id}`)
         `;
         });
 
-        // au clic on ajoute dans le panier
+        //--------------------------------------------------------------
+        // AU CLICK ON AJOUTE DANS LE PANIER
+        //--------------------------------------------------------------
 
-        let btnPanier = document.getElementById("addToCart");
+        let btnBasket = document.getElementById("addToCart");
         let itemQuantity = document.getElementById("quantity");
 
-        btnPanier.addEventListener("click", () => {
+        btnBasket.addEventListener("click", () => {
             if (itemQuantity.value <= 0 ||
                 itemQuantity.value > 100 ||
                 itemQuantity.value === undefined ||
