@@ -118,7 +118,7 @@ let loginForm = document.querySelector(".cart__order__form");
 //---------------------------------------
 // Regex pour les champs prénom,nom,ville
 //---------------------------------------
-let regexText = new RegExp("^[a-zA-Z,.'-áàâäãåçéèêëíìîïñóòôöõúùûüýÿ]+$");
+let regexText = new RegExp(/^[a-záàâäãå'çéèêëíìîïñóòôöõúùûüýÿæœ\s-]{1,31}$/i);
 //---------------------------------------
 // Regex pour le champs Adresse
 //---------------------------------------
@@ -140,7 +140,7 @@ function testInput(formInput, errorId, inputId, regex) {
         document.getElementById(inputId).style.backgroundColor = "green";
         return true;
     } else {
-        document.getElementById(errorId).textContent = "le champs contient des caractères incorect ou n'est pas conforme";
+        document.getElementById(errorId).textContent = "le champs contient des caractères incorrects ou n'est pas conforme";
         document.getElementById(inputId).style.backgroundColor = "red";
         return false;
     }
